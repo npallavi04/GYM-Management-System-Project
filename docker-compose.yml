@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gym_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/gym.db:/app/gym.db  # Persist SQLite DB
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:///./gym.db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: gym_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    depends_on:
+      - backend
